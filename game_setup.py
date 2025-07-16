@@ -35,6 +35,7 @@ class Character:
         self.name = name
         self.species = species
         self.stats = stats
+        self.abilities = []
         self.inventory = []
 
 
@@ -52,15 +53,27 @@ def create_player_characters():
             except ValueError:
                 print('Please enter a valid integer\n')
     
-    for _ in range(len(pc_count)):
+    player_list = []
+    
+    for _ in range(pc_count):
         pc_name = input('Name: ')
-        pc_race = input('Name: ')
+        pc_species = input('Species: ')
         pc_strength = get_stat("Strength")
         pc_endurance = get_stat('Endurance: ')
         pc_flexibility = get_stat('Flexibility: ')
         pc_perception = get_stat('Perception: ')
         pc_charisma = get_stat('Charisma: ')
         pc_mana = get_stat('Mana: ')
+
+
+        pc_stats = Stats(pc_strength, pc_endurance, pc_flexibility, pc_perception, pc_charisma, pc_mana)
+        player = Character(pc_name, pc_species, pc_stats)
+
+        # Add items and abilities to your character 
+
+        player_list.append(player)
+
+
 
 
 def get_stat(stat_name):

@@ -15,7 +15,8 @@ def welcome():
         mainMenuChoice = input("1. New game\n2. Continue Game\n3. Game Explanation\n\n")
 
         if mainMenuChoice == "1":
-            # INITIALIZE A NEW GAME, name new Save file
+            game_setup.create_player_characters()
+
             break
 
         elif mainMenuChoice == "2":

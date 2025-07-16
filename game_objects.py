@@ -1,10 +1,12 @@
+import game_setup
+
 def main():
 
-    createAllEquipment()
+    create_all_equipment()
 
-    createAllAbilities()
+    create_all_abilities()
 
-    createAllSpecies()
+    create_all_species()
 
 
     #Initialize all the different Species
@@ -13,19 +15,19 @@ def main():
 
 
 
-def createAllAbilities():
+def create_all_abilities():
     S
 
 
-def createAllEquipment():
+def create_all_equipment():
     S
 
 
-def createAllSpecies():
-    human_stats = Stats(10, 10, 10, 10, 10, 10)
+def create_all_species():
+    human_stats = game_setup.Stats(10, 10, 10, 10, 10, 10)
     human_equipment = None
     human_abilities = None
-    human = Species('Human', human_stats, human_abilities, human_equipment)
+    human = game_setup.Species('Human', human_stats, human_abilities, human_equipment)
 
 
 main()
