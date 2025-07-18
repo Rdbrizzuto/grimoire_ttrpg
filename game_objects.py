@@ -1,21 +1,8 @@
 import game_setup
-
-def main():
-
-    equipment_dict = create_all_equipment()
-    ability_dict = create_all_abilities()
-    species_dict = create_all_species(equipment_dict, ability_dict)
-
-    #Initialize all the different Species, abilities, and equipment
-    enemy_list = create_enemies(species_dict)
-
-    combat(player_list, enemy_list)
-
-
-    #Initialize all the different Species
-    #Initialize all the different Equipment
-    #Initialize all the different abilities
-
+from game_setup import Stats
+from game_setup import Ability
+from game_setup import Equipment
+from game_setup import Species
 
 
 
@@ -84,5 +71,3 @@ def create_all_species(equipment_dict, ability_dict):
 
     return species_dict
 
-
-main()

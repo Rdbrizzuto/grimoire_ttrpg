@@ -28,10 +28,12 @@ class Ability:
 
 
 class Equipment:
-    def __init__(self, name):
+    def __init__(self, name, damage=0, weight=0, armor=0, slot="weapon"):
         self.name = name
-
-        #Components of equipment????
+        self.damage = damage
+        self.weight = weight
+        self.armor = armor
+        self.slot = slot  # e.g., "weapon", "armor", "accessory"
 
 
 class Species:
@@ -55,32 +57,23 @@ class Character:
 
         # Combat state
         self.current_health = self.stats.max_health
-        self.current_mp = self.stats.mp
+        self.current_mp = self.stats.max_mp
         self.ready_time = 0
-
-
-class Action:
-    def __init__(self, user, ability, target, current_time):
-        self.user = user
-        self.ability = ability
-        self.target = target
-
-        weapon = user.equiped.get('weapon')
-        weapon_weight = weapon.weight if weapon else 0
-
-        self.action_speed = user.stats.speed + ability.time_cost + weapon_weight
-        self.scheduled_time = current_time + self.action_speed
-
-    def execute(self):
-        if self.target.is_alive() and self.user.is_alive():
-            self.user.perform_ability(self.ability, self.target)
-        else:
-            print(f"{self.user.name}'s action does nothing.")
-
-
 
     def is_alive(self):
         return self.current_health > 0
+    
+    def add_to_inventory(self, item):
+        if not isinstance(item, Equipment):
+            raise ValueError(f"{item} is not a valid Equipment object.")
+        if item in self.inventory:
+            print(f"{item.name} is already in inventory.")
+            return
+        self.inventory.append(item)
+        print(f"{self.name} added {item.name} to their inventory.")
+
+        #would it be better for me to add a list of all equipment, that is how abilities and characters work rn
+        #or maybe those should be updated to this
 
     def perform_ability(self, ability, target):
         if ability.mana_cost > self.current_mp:
@@ -97,28 +90,29 @@ class Action:
 
         print(f"{self.name} uses {ability.name} on {target.name} for {total_damage} damage!")
         return total_damage, ability.time_cost
-    
-    def add_to_inventory(self, item):
-        if not isinstance(item, Equipment):
-            raise ValueError(f"{item} is not a valid Equipment object.")
-        if item in self.inventory:
-            print(f"{item.name} is already in inventory.")
-            return
-        self.inventory.append(item)
-        print(f"{self.name} added {item.name} to their inventory.")
-
-        #would it be better for me to add a list of all equipment, that is how abilities and characters work rn
-        #or maybe those should be updated to this
 
 
+class Action:
+    def __init__(self, user, ability, target, current_time):
+        self.user = user
+        self.ability = ability
+        self.target = target
+        
+        weapon = user.equiped.get('weapon')
+        weapon_weight = weapon.weight if weapon else 0
 
-class Equipment:
-    def __init__(self, name, damage=0, weight=0, armor=0, slot="weapon"):
-        self.name = name
-        self.damage = damage
-        self.weight = weight
-        self.armor = armor
-        self.slot = slot  # e.g., "weapon", "armor", "accessory"
+        self.action_speed = user.stats.speed + ability.time_cost + weapon_weight
+        self.scheduled_time = current_time + self.action_speed
+        
+
+    def execute(self):
+        if self.target.is_alive() and self.user.is_alive():
+            self.user.perform_ability(self.ability, self.target)
+        else:
+            print(f"{self.user.name}'s action does nothing.")
+
+    def __lt__(self, other):
+        return self.scheduled_time < other.scheduled_time
 
     
 
@@ -160,8 +154,8 @@ def create_player_characters(species_dict, equipment_dict, ability_dict):
         player = Character(name, species, is_player=True)
 
         player.stats = pc_stats
-        player.stats.current_health = player.stats.max_health
-        player.stats.current_mp = player.stats.max_mp
+        player.current_health = player.stats.max_health
+        player.current_mp = player.stats.max_mp
         
         
         # TODO: Add inventory and abilities 
