@@ -24,7 +24,6 @@ class Ability:
         self.time_cost = time_cost
         self.mana_cost = mana_cost
 
-        #Components of Abilities??
 
 
 class Equipment:
@@ -72,8 +71,7 @@ class Character:
         self.inventory.append(item)
         print(f"{self.name} added {item.name} to their inventory.")
 
-        #would it be better for me to add a list of all equipment, that is how abilities and characters work rn
-        #or maybe those should be updated to this
+
 
     def perform_ability(self, ability, target):
         if ability.mana_cost > self.current_mp:
@@ -158,7 +156,7 @@ def create_player_characters(species_dict, equipment_dict, ability_dict):
         player.current_mp = player.stats.max_mp
         
         
-        # TODO: Add inventory and abilities 
+        # TODO: Allow players to add additional inventory and abilities 
 
         player_list.append(player)
     
@@ -169,7 +167,7 @@ def create_player_characters(species_dict, equipment_dict, ability_dict):
 
 def get_stat(stat_name):
     while True:
-        stat_value = input(f'{stat_name}: ')
+        stat_value = input(f'{stat_name}')
         try:
             stat_value = int(stat_value)
             if 1 <= stat_value <= 20:

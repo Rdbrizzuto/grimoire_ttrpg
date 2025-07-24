@@ -27,7 +27,7 @@ def welcome(species_dict, equipment_dict, ability_dict):
             return player_list
 
         elif mainMenuChoice == "2":
-            # TODO: IMPORT JSON DATA to create player_list
+            # TODO: player_list = IMPORT function to retrieve JSON DATA
 
             return player_list
 
@@ -41,6 +41,7 @@ def welcome(species_dict, equipment_dict, ability_dict):
 
 def explain_game():
     print("Explanation\n")
+    # TODO: make an actual explanation 
     input('Press "Enter" to continue\n')
 
 
@@ -57,6 +58,7 @@ def dm_menu(player_list, species_dict):
         elif dmMenuChoice == "2":
             continue # temp until logic added
             # TODO: add function to edit player character stats
+            # Create a function to choose a character to edit. Maybe add a method to character, that allows one to change a stat
 
         elif dmMenuChoice == "3":
             continue # temp until logic added
@@ -89,9 +91,10 @@ def combat(player_list, enemy_list):
                 continue
 
             if character.ready_time <= current_time:
-                print(f"\n{character.name} select and action")
+                print(f"\n{character.name} select an action")
                 
                 # TEMP: Auto-pick first ability and random target (replace with player input)
+                # TODO: player inputs the ability they want to use
                 ability = character.abilities[0]
 
                 # Determine who is alive to target, and Target a character
@@ -104,6 +107,7 @@ def combat(player_list, enemy_list):
                     continue
 
                 target = alive_targets[0]  # TEMP: pick first target (replace with player input)
+                # TODO: player inputs who to target
                 
                 # Create and schedule action
                 action = Action(character, ability, target, current_time)
