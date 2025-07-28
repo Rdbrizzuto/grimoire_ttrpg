@@ -1,4 +1,3 @@
-import game_setup
 from game_setup import Stats
 from game_setup import Ability
 from game_setup import Equipment

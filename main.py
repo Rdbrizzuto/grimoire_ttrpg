@@ -7,13 +7,13 @@ from game_setup import Action
 
 def main():
 
+    #Initialize all the different Species, abilities, and equipment
     equipment_dict = game_objects.create_all_equipment()
     ability_dict = game_objects.create_all_abilities()
     species_dict = game_objects.create_all_species(equipment_dict, ability_dict)
-    #Initialize all the different Species, abilities, and equipment
 
     player_list = welcome(species_dict, equipment_dict, ability_dict)
-    dm_menu(player_list, species_dict)
+    dm_menu(player_list, species_dict, equipment_dict, ability_dict)
 
 
 def welcome(species_dict, equipment_dict, ability_dict):
@@ -27,8 +27,9 @@ def welcome(species_dict, equipment_dict, ability_dict):
             return player_list
 
         elif mainMenuChoice == "2":
-            # TODO: player_list = IMPORT function to retrieve JSON DATA
-
+            player_list = game_setup.load_game(species_dict, equipment_dict, ability_dict)
+            if player_list is None:
+                continue
             return player_list
 
         elif mainMenuChoice == "3":
@@ -45,7 +46,7 @@ def explain_game():
     input('Press "Enter" to continue\n')
 
 
-def dm_menu(player_list, species_dict):
+def dm_menu(player_list, species_dict, equipment_dict, ability_dict):
     while True:
         print('What would you like to do?')
         dmMenuChoice = input('1. Start Encounter\n2. Edit Player Character\n3. Save Game State\n\n')
@@ -56,13 +57,12 @@ def dm_menu(player_list, species_dict):
             combat(player_list, enemy_list)
 
         elif dmMenuChoice == "2":
-            continue # temp until logic added
-            # TODO: add function to edit player character stats
-            # Create a function to choose a character to edit. Maybe add a method to character, that allows one to change a stat
+            game_setup.edit_player_character(player_list, equipment_dict, ability_dict)
+
+
 
         elif dmMenuChoice == "3":
-            continue # temp until logic added
-            # TODO: Update JSON FILE
+            game_setup.save_game(player_list)
         
         else:
             print('Invalid input, please type "1", "2", or "3"\n')
@@ -85,17 +85,14 @@ def combat(player_list, enemy_list):
             print("The enemies have been defeated!")
             break
 
-        # 1. Add actions for characters ready to act
+        # Add actions for characters ready to act
         for character in encounter_list:
             if not character.is_alive():
                 continue
 
             if character.ready_time <= current_time:
                 print(f"\n{character.name} select an action")
-                
-                # TEMP: Auto-pick first ability and random target (replace with player input)
-                # TODO: player inputs the ability they want to use
-                ability = character.abilities[0]
+                ability = select_ability(character)
 
                 # Determine who is alive to target, and Target a character
                 alive_targets = []
@@ -105,10 +102,9 @@ def combat(player_list, enemy_list):
 
                 if not alive_targets:
                     continue
-
-                target = alive_targets[0]  # TEMP: pick first target (replace with player input)
-                # TODO: player inputs who to target
                 
+                target = select_target(character, alive_targets)
+
                 # Create and schedule action
                 action = Action(character, ability, target, current_time)
                 heapq.heappush(action_queue, action)
@@ -116,12 +112,12 @@ def combat(player_list, enemy_list):
                 # Set when this character will next be ready
                 character.ready_time = action.scheduled_time
 
-        # 2. If action queue is empty, just skip time forward
+        # If action queue is empty, just skip time forward
         if not action_queue:
             current_time += 1
             continue
 
-        # 3. If next action is ready, execute it
+        # If next action is ready, execute it
         next_action = action_queue[0]
         if next_action.scheduled_time <= current_time:
             heapq.heappop(action_queue)
@@ -154,7 +150,6 @@ def create_enemies(species_dict):
             
             enemy_type = input(f"Enter species for enemy {i+1}: ").strip().capitalize()
 
-            # not sure if try except is neccesary here ??????
             try: 
                 if enemy_type in species_dict:
                     break
@@ -170,6 +165,34 @@ def create_enemies(species_dict):
         enemy_list.append(enemy)
 
     return enemy_list
+
+
+def select_ability(character):
+    print(f"\n{character.name}'s Abilities:")
+    for i, ability in enumerate(character.abilities, 1):
+        print(f"{i}. {ability.name} (MP: {ability.mana_cost}, Time: {ability.time_cost})")
+
+    while True:
+        choice = input("Choose an ability by number: ").strip()
+        if choice.isdigit():
+            index = int(choice) - 1
+            if 0 <= index < len(character.abilities):
+                return character.abilities[index]
+        print("Invalid input. Try again.")
+
+
+def select_target(character, targets):
+    print(f"\n{character.name}, choose a target:")
+    for i, target in enumerate(targets, 1):
+        print(f"{i}. {target.name}")
+
+    while True:
+        choice = input("Choose a target by number: ").strip()
+        if choice.isdigit():
+            index = int(choice) - 1
+            if 0 <= index < len(targets):
+                return targets[index]
+        print("Invalid input. Try again.")
 
 
 
